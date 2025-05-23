@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FND Financial Model - Excel Export</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .excel-table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        .excel-table th, .excel-table td { border: 1px solid #000; padding: 8px; text-align: right; }
+        .excel-table th { background-color: #4472C4; color: white; font-weight: bold; }
+        .excel-table td:first-child, .excel-table th:first-child { text-align: left; }
+        .section-header { background-color: #70AD47; color: white; font-weight: bold; }
+        .reported { color: blue; font-weight: bold; }
+        .calculated { color: black; }
+        .assumption { color: red; font-weight: bold; }
+        .street { color: purple; font-weight: bold; }
+        .download-btn { 
+            background: #4472C4; color: white; padding: 10px 20px; 
+            border: none; border-radius: 5px; cursor: pointer; margin: 10px 0;
+        }
+        .sheet-tab { 
+            display: inline-block; padding: 10px; margin: 5px; 
+            background: #f0f0f0; border: 1px solid #ccc; cursor: pointer;
+        }
+        .sheet-tab.active { background: #4472C4; color: white; }
+        .sheet-content { display: none; }
+        .sheet-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+<h1>Floor & Decor Holdings, Inc. (FND) - Financial Model</h1>
+
+<button class="download-btn" onclick="downloadAsCSV()">Download Current Sheet as CSV</button>
+<button class="download-btn" onclick="copyToClipboard()">Copy Current Sheet to Clipboard</button>
+<button class="download-btn" onclick="downloadAllSheets()">Download All Sheets as CSV</button>
+
+<div class="sheet-tabs">
+    <div class="sheet-tab active" onclick="showSheet('summary')">Summary & Valuation</div>
+    <div class="sheet-tab" onclick="showSheet('historical')">Historical Financials</div>
+    <div class="sheet-tab" onclick="showSheet('projections')">Projections</div>
+    <div class="sheet-tab" onclick="showSheet('dcf')">DCF Model</div>
+    <div class="sheet-tab" onclick="showSheet('scenarios')">Scenarios</div>
+    <div class="sheet-tab" onclick="showSheet('sensitivity')">Sensitivity</div>
+</div>
+
+<!-- SUMMARY & VALUATION SHEET -->
+<div id="summary" class="sheet-content active">
+<h2>Summary & Valuation</h2>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="3" class="section-header">Investment Summary</th></tr>
+</thead>
+<tbody>
+<tr><td>Current Stock Price</td><td>$</td><td class="street">79.54</td></tr>
+<tr><td>Price Target</td><td>$</td><td class="calculated">88.50</td></tr>
+<tr><td>Upside/(Downside)</td><td>%</td><td class="calculated">11.3%</td></tr>
+<tr><td>Recommendation</td><td></td><td>HOLD</td></tr>
+<tr><td>Time Horizon</td><td></td><td>12 months</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="6" class="section-header">Valuation Summary</th></tr>
+<tr><th>Method</th><th>Multiple</th><th>Value</th><th>Price Target</th><th>Weight</th><th>Weighted Value</th></tr>
+</thead>
+<tbody>
+<tr><td>DCF Analysis</td><td>-</td><td class="calculated">6,234</td><td class="calculated">$58.00</td><td class="assumption">20%</td><td class="calculated">$11.60</td></tr>
+<tr><td>P/E Multiple</td><td class="street">20.0x</td><td class="calculated">5,774</td><td class="calculated">$85.00</td><td class="assumption">30%</td><td class="calculated">$25.50</td></tr>
+<tr><td>EV/EBITDA</td><td class="street">11.5x</td><td class="calculated">6,585</td><td class="calculated">$95.00</td><td class="assumption">30%</td><td class="calculated">$28.50</td></tr>
+<tr><td>EV/Sales</td><td class="street">1.4x</td><td class="calculated">6,360</td><td class="calculated">$92.00</td><td class="assumption">20%</td><td class="calculated">$18.40</td></tr>
+<tr><td><strong>Blended Target</strong></td><td></td><td></td><td class="calculated"><strong>$88.50</strong></td><td></td><td class="calculated"><strong>$84.00</strong></td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="5" class="section-header">Key Metrics</th></tr>
+<tr><th>Metric</th><th>2023A</th><th>2024A</th><th>2025E</th><th>2026E</th></tr>
+</thead>
+<tbody>
+<tr><td>Revenue ($M)</td><td class="reported">4,414</td><td class="reported">4,456</td><td class="street">4,815</td><td class="street">5,180</td></tr>
+<tr><td>EBITDA ($M)</td><td class="reported">551</td><td class="reported">513</td><td class="calculated">565</td><td class="calculated">640</td></tr>
+<tr><td>Net Income ($M)</td><td class="reported">246</td><td class="reported">206</td><td class="street">198</td><td class="street">240</td></tr>
+<tr><td>EPS</td><td class="reported">$2.28</td><td class="reported">$1.90</td><td class="street">$1.84</td><td class="street">$2.22</td></tr>
+<tr><td>ROIC</td><td class="calculated">11.8%</td><td class="calculated">8.8%</td><td class="calculated">9.5%</td><td class="calculated">10.8%</td></tr>
+<tr><td>P/E Multiple</td><td class="calculated">21.9x</td><td class="calculated">26.3x</td><td class="calculated">43.2x</td><td class="calculated">35.8x</td></tr>
+<tr><td>EV/EBITDA</td><td class="calculated">9.8x</td><td class="calculated">10.5x</td><td class="calculated">15.1x</td><td class="calculated">13.3x</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- HISTORICAL FINANCIALS SHEET -->
+<div id="historical" class="sheet-content">
+<h2>Historical Financials (Quarterly)</h2>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="7" class="section-header">Income Statement ($M)</th></tr>
+<tr><th>Period</th><th>Q1 2024</th><th>Q2 2024</th><th>Q3 2024</th><th>Q4 2024</th><th>Q1 2025</th><th>LTM</th></tr>
+</thead>
+<tbody>
+<tr><td>Net Sales</td><td class="reported">1,097.3</td><td class="reported">1,133.1</td><td class="reported">1,117.9</td><td class="calculated">1,107.4</td><td class="reported">1,160.7</td><td class="calculated">4,518.4</td></tr>
+<tr><td>Gross Profit</td><td class="reported">470.0</td><td class="reported">491.0</td><td class="reported">485.9</td><td class="calculated">481.3</td><td class="reported">508.2</td><td class="calculated">1,966.4</td></tr>
+<tr><td>Gross Margin %</td><td class="calculated">42.8%</td><td class="calculated">43.3%</td><td class="calculated">43.5%</td><td class="calculated">43.5%</td><td class="calculated">43.8%</td><td class="calculated">43.5%</td></tr>
+<tr><td>SG&A Expenses</td><td class="calculated">410.7</td><td class="calculated">419.7</td><td class="calculated">419.6</td><td class="calculated">422.1</td><td class="calculated">444.0</td><td class="calculated">1,716.1</td></tr>
+<tr><td>SG&A %</td><td class="calculated">37.4%</td><td class="calculated">37.0%</td><td class="calculated">37.5%</td><td class="calculated">38.1%</td><td class="calculated">38.2%</td><td class="calculated">38.0%</td></tr>
+<tr><td>Operating Income</td><td class="reported">59.3</td><td class="reported">71.3</td><td class="reported">66.3</td><td class="calculated">59.2</td><td class="reported">64.2</td><td class="calculated">260.3</td></tr>
+<tr><td>Operating Margin %</td><td class="calculated">5.4%</td><td class="calculated">6.3%</td><td class="calculated">5.9%</td><td class="calculated">5.3%</td><td class="calculated">5.5%</td><td class="calculated">5.8%</td></tr>
+<tr><td>Interest Expense</td><td class="calculated">3.8</td><td class="calculated">3.9</td><td class="calculated">3.6</td><td class="calculated">3.3</td><td class="calculated">3.1</td><td class="calculated">13.9</td></tr>
+<tr><td>Pre-tax Income</td><td class="calculated">55.5</td><td class="calculated">67.4</td><td class="calculated">62.7</td><td class="calculated">55.9</td><td class="calculated">61.1</td><td class="calculated">246.4</td></tr>
+<tr><td>Tax Rate %</td><td class="calculated">12.8%</td><td class="calculated">19.8%</td><td class="calculated">21.8%</td><td class="calculated">18.0%</td><td class="calculated">22.0%</td><td class="calculated">18.6%</td></tr>
+<tr><td>Net Income</td><td class="reported">50.0</td><td class="reported">56.7</td><td class="reported">51.7</td><td class="calculated">47.4</td><td class="reported">48.9</td><td class="calculated">204.7</td></tr>
+<tr><td>EPS (Diluted)</td><td class="reported">$0.46</td><td class="reported">$0.52</td><td class="reported">$0.48</td><td class="calculated">$0.44</td><td class="reported">$0.45</td><td class="calculated">$1.89</td></tr>
+<tr><td>Shares Outstanding</td><td class="reported">107.0</td><td class="reported">107.2</td><td class="reported">107.2</td><td class="reported">107.4</td><td class="reported">107.6</td><td class="calculated">107.6</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="7" class="section-header">Operating Metrics</th></tr>
+<tr><th>Metric</th><th>Q1 2024</th><th>Q2 2024</th><th>Q3 2024</th><th>Q4 2024</th><th>Q1 2025</th><th>Trend</th></tr>
+</thead>
+<tbody>
+<tr><td>Store Count (End)</td><td class="reported">225</td><td class="reported">230</td><td class="reported">241</td><td class="reported">256</td><td class="reported">254</td><td>+29 YoY</td></tr>
+<tr><td>Comp Store Sales %</td><td class="reported">-11.6%</td><td class="reported">-9.0%</td><td class="reported">-6.4%</td><td class="calculated">-4.2%</td><td class="reported">-1.8%</td><td>Improving</td></tr>
+<tr><td>Comp Avg Ticket %</td><td class="reported">-4.2%</td><td class="reported">-4.3%</td><td class="reported">-2.4%</td><td class="calculated">-1.5%</td><td class="reported">2.1%</td><td>Inflecting</td></tr>
+<tr><td>Comp Transactions %</td><td class="reported">-7.7%</td><td class="reported">-4.9%</td><td class="reported">-4.1%</td><td class="calculated">-2.7%</td><td class="reported">-3.8%</td><td>Stabilizing</td></tr>
+<tr><td>Sales per Store ($M)</td><td class="calculated">4.88</td><td class="calculated">4.93</td><td class="calculated">4.64</td><td class="calculated">4.33</td><td class="calculated">4.57</td><td>Recovering</td></tr>
+<tr><td>Adjusted EBITDA ($M)</td><td class="reported">123.0</td><td class="reported">136.9</td><td class="reported">132.9</td><td class="calculated">119.8</td><td class="reported">129.8</td><td class="calculated">512.4</td></tr>
+<tr><td>EBITDA Margin %</td><td class="calculated">11.2%</td><td class="calculated">12.1%</td><td class="calculated">11.9%</td><td class="calculated">10.8%</td><td class="calculated">11.2%</td><td>11.3%</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="4" class="section-header">Balance Sheet Highlights ($M)</th></tr>
+<tr><th>Item</th><th>Q4 2024</th><th>Q1 2025</th><th>Change</th></tr>
+</thead>
+<tbody>
+<tr><td>Cash & Equivalents</td><td class="reported">187.7</td><td class="reported">186.9</td><td class="calculated">-0.8</td></tr>
+<tr><td>Inventory</td><td class="reported">1,132.6</td><td class="reported">1,189.3</td><td class="calculated">56.7</td></tr>
+<tr><td>Total Assets</td><td class="reported">5,050.5</td><td class="reported">5,368.3</td><td class="calculated">317.8</td></tr>
+<tr><td>Term Loan</td><td class="reported">200.3</td><td class="reported">199.8</td><td class="calculated">-0.5</td></tr>
+<tr><td>Total Debt</td><td class="calculated">200.3</td><td class="calculated">199.8</td><td class="calculated">-0.5</td></tr>
+<tr><td>Stockholders' Equity</td><td class="reported">2,170.2</td><td class="reported">2,221.8</td><td class="calculated">51.6</td></tr>
+<tr><td>Net Debt</td><td class="calculated">12.6</td><td class="calculated">12.9</td><td class="calculated">0.3</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- PROJECTIONS SHEET -->
+<div id="projections" class="sheet-content">
+<h2>Financial Projections</h2>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="8" class="section-header">Income Statement Projections ($M)</th></tr>
+<tr><th>Period</th><th>Q2 2025E</th><th>Q3 2025E</th><th>Q4 2025E</th><th>2025E</th><th>2026E</th><th>2027E</th><th>2028E</th></tr>
+</thead>
+<tbody>
+<tr><td>Net Sales</td><td class="assumption">1,185.0</td><td class="assumption">1,195.0</td><td class="assumption">1,210.0</td><td class="street">4,815.0</td><td class="street">5,180.0</td><td class="assumption">5,560.0</td><td class="assumption">5,950.0</td></tr>
+<tr><td>YoY Growth %</td><td class="calculated">4.6%</td><td class="calculated">6.9%</td><td class="calculated">9.3%</td><td class="calculated">8.0%</td><td class="calculated">7.6%</td><td class="calculated">7.3%</td><td class="calculated">7.0%</td></tr>
+<tr><td>Gross Profit</td><td class="calculated">521.4</td><td class="calculated">528.2</td><td class="calculated">532.4</td><td class="calculated">2,119.2</td><td class="calculated">2,279.2</td><td class="calculated">2,446.4</td><td class="calculated">2,618.0</td></tr>
+<tr><td>Gross Margin %</td><td class="assumption">44.0%</td><td class="assumption">44.2%</td><td class="assumption">44.0%</td><td class="calculated">44.0%</td><td class="assumption">44.0%</td><td class="assumption">44.0%</td><td class="assumption">44.0%</td></tr>
+<tr><td>SG&A Expenses</td><td class="calculated">444.3</td><td class="calculated">444.7</td><td class="calculated">450.2</td><td class="calculated">1,783.2</td><td class="calculated">1,864.8</td><td class="calculated">2,001.6</td><td class="calculated">2,142.0</td></tr>
+<tr><td>SG&A %</td><td class="assumption">37.5%</td><td class="assumption">37.2%</td><td class="assumption">37.2%</td><td class="calculated">37.0%</td><td class="assumption">36.0%</td><td class="assumption">36.0%</td><td class="assumption">36.0%</td></tr>
+<tr><td>Operating Income</td><td class="calculated">77.1</td><td class="calculated">83.5</td><td class="calculated">82.2</td><td class="calculated">336.0</td><td class="calculated">414.4</td><td class="calculated">444.8</td><td class="calculated">476.0</td></tr>
+<tr><td>Operating Margin %</td><td class="calculated">6.5%</td><td class="calculated">7.0%</td><td class="calculated">6.8%</td><td class="calculated">7.0%</td><td class="calculated">8.0%</td><td class="calculated">8.0%</td><td class="calculated">8.0%</td></tr>
+<tr><td>Interest Expense</td><td class="assumption">3.0</td><td class="assumption">2.9</td><td class="assumption">2.8</td><td class="calculated">11.8</td><td class="assumption">10.0</td><td class="assumption">8.0</td><td class="assumption">6.0</td></tr>
+<tr><td>Pre-tax Income</td><td class="calculated">74.1</td><td class="calculated">80.6</td><td class="calculated">79.4</td><td class="calculated">324.2</td><td class="calculated">404.4</td><td class="calculated">436.8</td><td class="calculated">470.0</td></tr>
+<tr><td>Tax Rate %</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="calculated">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td></tr>
+<tr><td>Net Income</td><td class="calculated">57.8</td><td class="calculated">62.9</td><td class="calculated">61.9</td><td class="street">198.0</td><td class="street">240.0</td><td class="calculated">340.7</td><td class="calculated">366.6</td></tr>
+<tr><td>EPS (Diluted)</td><td class="calculated">$0.54</td><td class="calculated">$0.58</td><td class="calculated">$0.57</td><td class="street">$1.84</td><td class="street">$2.22</td><td class="calculated">$3.13</td><td class="calculated">$3.36</td></tr>
+<tr><td>Shares Outstanding</td><td class="assumption">108.0</td><td class="assumption">108.5</td><td class="assumption">109.0</td><td class="calculated">108.3</td><td class="assumption">108.5</td><td class="assumption">109.0</td><td class="assumption">109.0</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="8" class="section-header">Operating Assumptions</th></tr>
+<tr><th>Metric</th><th>Q2 2025E</th><th>Q3 2025E</th><th>Q4 2025E</th><th>2025E</th><th>2026E</th><th>2027E</th><th>2028E</th></tr>
+</thead>
+<tbody>
+<tr><td>Store Count (End)</td><td class="assumption">259</td><td class="assumption">264</td><td class="assumption">269</td><td class="street">269</td><td class="assumption">289</td><td class="assumption">309</td><td class="assumption">329</td></tr>
+<tr><td>New Stores Opened</td><td class="assumption">5</td><td class="assumption">5</td><td class="assumption">5</td><td class="street">20</td><td class="assumption">20</td><td class="assumption">20</td><td class="assumption">20</td></tr>
+<tr><td>Comp Store Sales %</td><td class="assumption">1.0%</td><td class="assumption">2.5%</td><td class="assumption">3.5%</td><td class="calculated">2.5%</td><td class="assumption">3.0%</td><td class="assumption">2.5%</td><td class="assumption">2.0%</td></tr>
+<tr><td>Sales per Store ($M)</td><td class="calculated">4.57</td><td class="calculated">4.53</td><td class="calculated">4.50</td><td class="calculated">17.9</td><td class="calculated">17.9</td><td class="calculated">18.0</td><td class="calculated">18.1</td></tr>
+<tr><td>Avg Ticket Growth %</td><td class="assumption">2.5%</td><td class="assumption">2.0%</td><td class="assumption">1.5%</td><td class="calculated">2.0%</td><td class="assumption">1.5%</td><td class="assumption">1.0%</td><td class="assumption">1.0%</td></tr>
+<tr><td>Transaction Growth %</td><td class="assumption">-1.5%</td><td class="assumption">0.5%</td><td class="assumption">2.0%</td><td class="calculated">0.5%</td><td class="assumption">1.5%</td><td class="assumption">1.5%</td><td class="assumption">1.0%</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="6" class="section-header">Key Assumptions & Rationale</th></tr>
+<tr><th>Category</th><th>Assumption</th><th>2025E</th><th>2026E</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Revenue Growth</td><td>Base Case</td><td class="street">8.0%</td><td class="street">7.6%</td><td>New stores + comp recovery</td></tr>
+<tr><td>Comp Sales</td><td>Recovery</td><td class="assumption">2.5%</td><td class="assumption">3.0%</td><td>Housing market normalization</td></tr>
+<tr><td>Gross Margin</td><td>Expansion</td><td class="assumption">44.0%</td><td class="assumption">44.0%</td><td>Scale benefits + procurement</td></tr>
+<tr><td>SG&A Leverage</td><td>Improvement</td><td class="assumption">37.0%</td><td class="assumption">36.0%</td><td>Operating leverage from comp recovery</td></tr>
+<tr><td>Store Growth</td><td>Disciplined</td><td class="street">20</td><td class="assumption">20</td><td>Quality markets, measured expansion</td></tr>
+<tr><td>CAPEX</td><td>% of Sales</td><td class="assumption">7.3%</td><td class="assumption">7.3%</td><td>New stores + maintenance capex</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- DCF MODEL SHEET -->
+<div id="dcf" class="sheet-content">
+<h2>DCF Valuation Model</h2>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="8" class="section-header">Free Cash Flow Projections ($M)</th></tr>
+<tr><th>Year</th><th>2025E</th><th>2026E</th><th>2027E</th><th>2028E</th><th>2029E</th><th>Terminal</th><th>Total</th></tr>
+</thead>
+<tbody>
+<tr><td>Revenue</td><td class="street">4,815</td><td class="street">5,180</td><td class="assumption">5,560</td><td class="assumption">5,950</td><td class="assumption">6,350</td><td class="calculated">6,509</td><td>-</td></tr>
+<tr><td>EBIT</td><td class="calculated">336.0</td><td class="calculated">414.4</td><td class="calculated">444.8</td><td class="calculated">476.0</td><td class="calculated">508.0</td><td class="calculated">520.7</td><td>-</td></tr>
+<tr><td>Tax Rate</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td class="assumption">22.0%</td><td>-</td></tr>
+<tr><td>NOPAT</td><td class="calculated">262.1</td><td class="calculated">323.2</td><td class="calculated">347.0</td><td class="calculated">371.3</td><td class="calculated">396.2</td><td class="calculated">406.1</td><td>-</td></tr>
+<tr><td>Depreciation</td><td class="assumption">185.0</td><td class="assumption">200.0</td><td class="assumption">215.0</td><td class="assumption">230.0</td><td class="assumption">245.0</td><td class="assumption">251.0</td><td>-</td></tr>
+<tr><td>Capex</td><td class="assumption">350.0</td><td class="assumption">380.0</td><td class="assumption">410.0</td><td class="assumption">440.0</td><td class="assumption">470.0</td><td class="assumption">481.7</td><td>-</td></tr>
+<tr><td>Change in NWC</td><td class="assumption">25.0</td><td class="assumption">30.0</td><td class="assumption">32.0</td><td class="assumption">34.0</td><td class="assumption">36.0</td><td class="assumption">5.0</td><td>-</td></tr>
+<tr><td>Free Cash Flow</td><td class="calculated">72.1</td><td class="calculated">113.2</td><td class="calculated">120.0</td><td class="calculated">127.3</td><td class="calculated">135.2</td><td class="calculated">170.4</td><td>-</td></tr>
+<tr><td>PV Factor</td><td class="calculated">0.916</td><td class="calculated">0.839</td><td class="calculated">0.768</td><td class="calculated">0.703</td><td class="calculated">0.644</td><td class="calculated">-</td><td>-</td></tr>
+<tr><td>PV of FCF</td><td class="calculated">66.0</td><td class="calculated">95.0</td><td class="calculated">92.2</td><td class="calculated">89.5</td><td class="calculated">87.1</td><td class="calculated">2,532.1</td><td class="calculated">2,961.9</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="3" class="section-header">DCF Assumptions</th></tr>
+</thead>
+<tbody>
+<tr><td>WACC Calculation</td><td></td><td></td></tr>
+<tr><td>Risk-free Rate</td><td class="assumption">4.2%</td><td>10-Year Treasury</td></tr>
+<tr><td>Market Risk Premium</td><td class="assumption">6.0%</td><td>Historical average</td></tr>
+<tr><td>Beta</td><td class="assumption">1.4</td><td>3-year regression</td></tr>
+<tr><td>Cost of Equity</td><td class="calculated">12.6%</td><td>CAPM</td></tr>
+<tr><td>Cost of Debt</td><td class="assumption">6.5%</td><td>Current borrowing rate</td></tr>
+<tr><td>Tax Rate</td><td class="assumption">22.0%</td><td>Normalized rate</td></tr>
+<tr><td>After-tax Cost of Debt</td><td class="calculated">5.1%</td><td>Cost of debt * (1-tax rate)</td></tr>
+<tr><td>Debt/Total Capital</td><td class="calculated">3.2%</td><td>Net debt / (debt + equity)</td></tr>
+<tr><td>Equity/Total Capital</td><td class="calculated">96.8%</td><td>Market equity / (debt + equity)</td></tr>
+<tr><td><strong>WACC</strong></td><td class="calculated"><strong>9.2%</strong></td><td>Weighted average</td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td>Terminal Value</td><td></td><td></td></tr>
+<tr><td>Terminal Growth Rate</td><td class="assumption">2.5%</td><td>Long-term GDP growth</td></tr>
+<tr><td>Terminal FCF</td><td class="calculated">170.4</td><td>2029E FCF</td></tr>
+<tr><td>Terminal Value</td><td class="calculated">2,532.1</td><td>FCF*(1+g)/(WACC-g)</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="3" class="section-header">Valuation Summary</th></tr>
+</thead>
+<tbody>
+<tr><td>Sum PV of FCF (2025-2029)</td><td class="calculated">429.8</td><td>Million</td></tr>
+<tr><td>PV of Terminal Value</td><td class="calculated">2,532.1</td><td>Million</td></tr>
+<tr><td><strong>Enterprise Value</strong></td><td class="calculated"><strong>2,961.9</strong></td><td><strong>Million</strong></td></tr>
+<tr><td>Less: Net Debt</td><td class="calculated">12.9</td><td>Million</td></tr>
+<tr><td><strong>Equity Value</strong></td><td class="calculated"><strong>2,949.0</strong></td><td><strong>Million</strong></td></tr>
+<tr><td>Shares Outstanding</td><td class="assumption">108.0</td><td>Million</td></tr>
+<tr><td><strong>Value per Share</strong></td><td class="calculated"><strong>$27.31</strong></td><td><strong>DCF Target</strong></td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="4" class="section-header">DCF Sensitivity Analysis</th></tr>
+<tr><th>WACC / Terminal Growth</th><th>2.0%</th><th>2.5%</th><th>3.0%</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>8.5%</strong></td><td class="calculated">$31.25</td><td class="calculated">$33.15</td><td class="calculated">$35.42</td></tr>
+<tr><td><strong>9.0%</strong></td><td class="calculated">$28.92</td><td class="calculated">$30.45</td><td class="calculated">$32.25</td></tr>
+<tr><td><strong>9.5%</strong></td><td class="calculated">$26.95</td><td class="calculated">$28.25</td><td class="calculated">$29.78</td></tr>
+<tr><td><strong>10.0%</strong></td><td class="calculated">$25.28</td><td class="calculated">$26.42</td><td class="calculated">$27.72</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- SCENARIOS SHEET -->
+<div id="scenarios" class="sheet-content">
+<h2>Scenario Analysis</h2>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="5" class="section-header">Three Scenario Framework</th></tr>
+<tr><th>Scenario</th><th>Probability</th><th>Key Drivers</th><th>2025E EPS</th><th>Price Target</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Bull Case</strong></td><td class="assumption">25%</td><td>Strong housing recovery</td><td class="calculated">$2.20</td><td class="calculated">$110.00</td></tr>
+<tr><td><strong>Base Case</strong></td><td class="assumption">50%</td><td>Gradual normalization</td><td class="street">$1.84</td><td class="street">$88.50</td></tr>
+<tr><td><strong>Bear Case</strong></td><td class="assumption">25%</td><td>Prolonged weakness</td><td class="calculated">$1.45</td><td class="calculated">$65.00</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="8" class="section-header">Bull Case Assumptions</th></tr>
+<tr><th>Metric</th><th>Q2 2025E</th><th>Q3 2025E</th><th>Q4 2025E</th><th>2025E</th><th>2026E</th><th>vs Base</th><th>Driver</th></tr>
+</thead>
+<tbody>
+<tr><td>Revenue Growth %</td><td class="assumption">8.0%</td><td class="assumption">10.0%</td><td class="assumption">15.0%</td><td class="calculated">12.0%</td><td class="assumption">10.0%</td><td class="calculated">+300bps</td><td>Accelerated housing recovery</td></tr>
+<tr><td>Comp Sales %</td><td class="assumption">3.0%</td><td class="assumption">5.0%</td><td class="assumption">6.0%</td><td class="calculated">5.0%</td><td class="assumption">4.0%</td><td class="calculated">+200bps</td><td>Strong consumer demand</td></tr>
+<tr><td>Gross Margin %</td><td class="assumption">44.5%</td><td class="assumption">45.0%</td><td class="assumption">45.0%</td><td class="calculated">44.8%</td><td class="assumption">45.0%</td><td class="calculated">+80bps</td><td>Pricing power + scale</td></tr>
+<tr><td>Operating Margin %</td><td class="assumption">7.5%</td><td class="assumption">8.5%</td><td class="assumption">9.0%</td><td class="calculated">8.5%</td><td class="assumption">9.0%</td><td class="calculated">+100bps</td><td>Strong operating leverage</td></tr>
+<tr><td>New Stores</td><td class="assumption">6</td><td class="assumption">6</td><td class="assumption">6</td><td class="calculated">25</td><td class="assumption">25</td><td class="calculated">+5</td><td>Accelerated expansion</td></tr>
+<tr><td>ROIC %</td><td>-</td><td>-</td><td>-</td><td class="calculated">12.5%</td><td class="calculated">14.0%</td><td class="calculated">+300bps</td><td>Improved capital efficiency</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="8" class="section-header">Bear Case Assumptions</th></tr>
+<tr><th>Metric</th><th>Q2 2025E</th><th>Q3 2025E</th><th>Q4 2025E</th><th>2025E</th><th>2026E</th><th>vs Base</th><th>Risk</th></tr>
+</thead>
+<tbody>
+<tr><td>Revenue Growth %</td><td class="assumption">0.0%</td><td class="assumption">1.0%</td><td class="assumption">3.0%</td><td class="calculated">2.0%</td><td class="assumption">3.0%</td><td class="calculated">-500bps</td><td>Prolonged housing downturn</td></tr>
+<tr><td>Comp Sales %</td><td class="assumption">-4.0%</td><td class="assumption">-3.0%</td><td class="assumption">-2.0%</td><td class="calculated">-3.0%</td><td class="assumption">-1.0%</td><td class="calculated">-400bps</td><td>Consumer weakness</td></tr>
+<tr><td>Gross Margin %</td><td class="assumption">43.0%</td><td class="assumption">42.8%</td><td class="assumption">42.5%</td><td class="calculated">42.5%</td><td class="assumption">42.5%</td><td class="calculated">-150bps</td><td>Competitive pressure</td></tr>
+<tr><td>Operating Margin %</td><td class="assumption">4.0%</td><td class="assumption">4.5%</td><td class="assumption">5.0%</td><td class="calculated">4.5%</td><td class="assumption">5.0%</td><td class="calculated">-250bps</td><td>Negative operating leverage</td></tr>
+<tr><td>New Stores</td><td class="assumption">3</td><td class="assumption">3</td><td class="assumption">3</td><td class="calculated">15</td><td class="assumption">15</td><td class="calculated">-5</td><td>Reduced investment</td></tr>
+<tr><td>ROIC %</td><td>-</td><td>-</td><td>-</td><td class="calculated">6.5%</td><td class="calculated">7.5%</td><td class="calculated">-300bps</td><td>Poor capital returns</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="5" class="section-header">Expected Value Analysis</th></tr>
+<tr><th>Scenario</th><th>Probability</th><th>Price Target</th><th>Weighted Value</th><th>Return</th></tr>
+</thead>
+<tbody>
+<tr><td>Bull Case</td><td class="assumption">25%</td><td class="calculated">$110.00</td><td class="calculated">$27.50</td><td class="calculated">+38%</td></tr>
+<tr><td>Base Case</td><td class="assumption">50%</td><td class="street">$88.50</td><td class="calculated">$44.25</td><td class="calculated">+11%</td></tr>
+<tr><td>Bear Case</td><td class="assumption">25%</td><td class="calculated">$65.00</td><td class="calculated">$16.25</td><td class="calculated">-18%</td></tr>
+<tr><td><strong>Expected Value</strong></td><td><strong>100%</strong></td><td class="calculated"><strong>$88.00</strong></td><td class="calculated"><strong>$88.00</strong></td><td class="calculated"><strong>+10.6%</strong></td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="4" class="section-header">Risk/Reward Analysis</th></tr>
+</thead>
+<tbody>
+<tr><td>Current Price</td><td class="street">$79.54</td><td></td><td></td></tr>
+<tr><td>Expected Value</td><td class="calculated">$88.00</td><td>+10.6%</td><td></td></tr>
+<tr><td>Upside (Bull)</td><td class="calculated">$110.00</td><td>+38.3%</td><td>$30.46</td></tr>
+<tr><td>Downside (Bear)</td><td class="calculated">$65.00</td><td>-18.3%</td><td>$14.54</td></tr>
+<tr><td><strong>Risk/Reward Ratio</strong></td><td class="calculated"><strong>2.1x</strong></td><td><strong>Favorable</strong></td><td>Upside/Downside</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- SENSITIVITY SHEET -->
+<div id="sensitivity" class="sheet-content">
+<h2>Sensitivity Analysis</h2>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="7" class="section-header">EPS Sensitivity to Comp Sales Growth (2025E)</th></tr>
+<tr><th>Gross Margin</th><th>-2%</th><th>0%</th><th>+2%</th><th>+4%</th><th>+6%</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>42.5%</strong></td><td class="calculated">$1.45</td><td class="calculated">$1.65</td><td class="calculated">$1.85</td><td class="calculated">$2.05</td><td class="calculated">$2.25</td><td class="calculated">$0.80</td></tr>
+<tr><td><strong>43.5%</strong></td><td class="calculated">$1.65</td><td class="calculated">$1.84</td><td class="calculated">$2.04</td><td class="calculated">$2.24</td><td class="calculated">$2.44</td><td class="calculated">$0.79</td></tr>
+<tr><td><strong>44.5%</strong></td><td class="calculated">$1.85</td><td class="calculated">$2.04</td><td class="calculated">$2.24</td><td class="calculated">$2.44</td><td class="calculated">$2.64</td><td class="calculated">$0.79</td></tr>
+<tr><td><strong>45.5%</strong></td><td class="calculated">$2.05</td><td class="calculated">$2.24</td><td class="calculated">$2.44</td><td class="calculated">$2.64</td><td class="calculated">$2.84</td><td class="calculated">$0.79</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="7" class="section-header">Price Target Sensitivity to Valuation Multiples</th></tr>
+<tr><th>P/E Multiple</th><th>18x</th><th>20x</th><th>22x</th><th>24x</th><th>26x</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>EV/EBITDA 10x</strong></td><td class="calculated">$68</td><td class="calculated">$75</td><td class="calculated">$82</td><td class="calculated">$89</td><td class="calculated">$96</td><td class="calculated">$28</td></tr>
+<tr><td><strong>EV/EBITDA 12x</strong></td><td class="calculated">$75</td><td class="calculated">$82</td><td class="calculated">$89</td><td class="calculated">$96</td><td class="calculated">$103</td><td class="calculated">$28</td></tr>
+<tr><td><strong>EV/EBITDA 14x</strong></td><td class="calculated">$82</td><td class="calculated">$89</td><td class="calculated">$96</td><td class="calculated">$103</td><td class="calculated">$110</td><td class="calculated">$28</td></tr>
+<tr><td><strong>EV/EBITDA 16x</strong></td><td class="calculated">$89</td><td class="calculated">$96</td><td class="calculated">$103</td><td class="calculated">$110</td><td class="calculated">$117</td><td class="calculated">$28</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="5" class="section-header">Key Value Drivers - Sensitivity Rankings</th></tr>
+<tr><th>Driver</th><th>Impact per Unit Change</th><th>Base Assumption</th><th>Sensitivity</th><th>Risk Level</th></tr>
+</thead>
+<tbody>
+<tr><td>Comp Store Sales</td><td class="calculated">$0.20 per 1%</td><td class="assumption">+2.5%</td><td class="calculated">High</td><td class="calculated">Medium</td></tr>
+<tr><td>Gross Margin</td><td class="calculated">$0.19 per 100bps</td><td class="assumption">44.0%</td><td class="calculated">High</td><td class="calculated">Medium</td></tr>
+<tr><td>SG&A Leverage</td><td class="calculated">$0.16 per 50bps</td><td class="assumption">37.0%</td><td class="calculated">Medium</td><td class="calculated">Low</td></tr>
+<tr><td>New Store Productivity</td><td class="calculated">$0.12 per 10%</td><td class="assumption">85%</td><td class="calculated">Medium</td><td class="calculated">Medium</td></tr>
+<tr><td>Store Growth Rate</td><td class="calculated">$0.08 per store</td><td class="street">20 stores</td><td class="calculated">Low</td><td class="calculated">Low</td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="4" class="section-header">Monte Carlo Simulation Results</th></tr>
+<tr><th>Percentile</th><th>EPS 2025E</th><th>Price Target</th><th>Total Return</th></tr>
+</thead>
+<tbody>
+<tr><td>90th</td><td class="calculated">$2.25</td><td class="calculated">$112</td><td class="calculated">+41%</td></tr>
+<tr><td>75th</td><td class="calculated">$2.05</td><td class="calculated">$98</td><td class="calculated">+23%</td></tr>
+<tr><td>50th (Median)</td><td class="street">$1.84</td><td class="street">$88</td><td class="calculated">+11%</td></tr>
+<tr><td>25th</td><td class="calculated">$1.65</td><td class="calculated">$78</td><td class="calculated">-2%</td></tr>
+<tr><td>10th</td><td class="calculated">$1.48</td><td class="calculated">$68</td><td class="calculated">-15%</td></tr>
+<tr><td><strong>Standard Deviation</strong></td><td class="calculated"><strong>$0.28</strong></td><td class="calculated"><strong>$15.20</strong></td><td class="calculated"><strong>19%</strong></td></tr>
+</tbody>
+</table>
+
+<table class="excel-table">
+<thead>
+<tr><th colspan="6" class="section-header">Tornado Chart - EPS Impact Analysis</th></tr>
+<tr><th>Variable</th><th>Low Case</th><th>Base Case</th><th>High Case</th><th>Range</th><th>Rank</th></tr>
+</thead>
+<tbody>
+<tr><td>Comp Sales Growth</td><td class="calculated">$1.65</td><td class="street">$1.84</td><td class="calculated">$2.04</td><td class="calculated">$0.39</td><td>1</td></tr>
+<tr><td>Gross Margin %</td><td class="calculated">$1.65</td><td class="street">$1.84</td><td class="calculated">$2.03</td><td class="calculated">$0.38</td><td>2</td></tr>
+<tr><td>SG&A % of Sales</td><td class="calculated">$1.68</td><td class="street">$1.84</td><td class="calculated">$2.00</td><td class="calculated">$0.32</td><td>3</td></tr>
+<tr><td>New Store Count</td><td class="calculated">$1.76</td><td class="street">$1.84</td><td class="calculated">$1.92</td><td class="calculated">$0.16</td><td>4</td></tr>
+<tr><td>Tax Rate %</td><td class="calculated">$1.78</td><td class="street">$1.84</td><td class="calculated">$1.90</td><td class="calculated">$0.12</td><td>5</td></tr>
+</tbody>
+</table>
+</div>
+
+<script>
+function showSheet(sheetName) {
+    // Hide all sheets
+    const sheets = document.querySelectorAll('.sheet-content');
+    sheets.forEach(sheet => sheet.classList.remove('active'));
+    
+    // Remove active from all tabs
+    const tabs = document.querySelectorAll('.sheet-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Show selected sheet
+    document.getElementById(sheetName).classList.add('active');
+    
+    // Add active to clicked tab
+    event.target.classList.add('active');
+}
+
+function downloadAsCSV() {
+    try {
+        let csvContent = "Floor & Decor Holdings Inc (FND) - Financial Model\n";
+        csvContent += "Generated on: " + new Date().toLocaleDateString() + "\n\n";
+        
+        // Get only visible table data
+        const activeSheet = document.querySelector('.sheet-content.active');
+        if (!activeSheet) {
+            alert('No active sheet found. Please select a sheet first.');
+            return;
+        }
+        
+        const sheetTitle = activeSheet.querySelector('h2').textContent;
+        csvContent += sheetTitle + "\n\n";
+        
+        const tables = activeSheet.querySelectorAll('.excel-table');
+        tables.forEach((table, tableIndex) => {
+            // Add section header if it exists
+            const sectionHeader = table.querySelector('.section-header');
+            if (sectionHeader) {
+                csvContent += sectionHeader.textContent + "\n";
+            }
+            
+            const rows = table.querySelectorAll('tr');
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('th, td');
+                const rowData = Array.from(cells).map(cell => {
+                    let text = cell.textContent.trim();
+                    // Clean up text but preserve numbers and percentages
+                    text = text.replace(/"/g, '""'); // Escape quotes
+                    return `"${text}"`;
+                });
+                csvContent += rowData.join(',') + '\n';
+            });
+            csvContent += '\n'; // Space between tables
+        });
+        
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `FND_Financial_Model_${sheetTitle.replace(/\s+/g, '_')}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert(`CSV file downloaded successfully: ${sheetTitle}`);
+        
+    } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again or use the Copy to Clipboard option.');
+    }
+}
+
+function copyToClipboard() {
+    try {
+        const activeSheet = document.querySelector('.sheet-content.active');
+        if (!activeSheet) {
+            alert('No active sheet found. Please select a sheet first.');
+            return;
+        }
+        
+        const sheetTitle = activeSheet.querySelector('h2').textContent;
+        let content = `Floor & Decor Holdings Inc (FND) - Financial Model\n`;
+        content += `Sheet: ${sheetTitle}\n`;
+        content += `Generated: ${new Date().toLocaleDateString()}\n\n`;
+        
+        const tables = activeSheet.querySelectorAll('.excel-table');
+        tables.forEach((table, tableIndex) => {
+            // Add section header
+            const sectionHeader = table.querySelector('.section-header');
+            if (sectionHeader) {
+                content += sectionHeader.textContent + '\n';
+            }
+            
+            const rows = table.querySelectorAll('tr');
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('th, td');
+                const rowData = Array.from(cells).map(cell => {
+                    let text = cell.textContent.trim();
+                    // Keep numerical formatting for Excel
+                    return text;
+                });
+                content += rowData.join('\t') + '\n';
+            });
+            content += '\n'; // Space between tables
+        });
+        
+        // Try modern clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(content).then(() => {
+                alert(`${sheetTitle} data copied to clipboard!\nYou can now paste this into Excel (Ctrl+V).`);
+            }).catch(err => {
+                console.error('Clipboard write failed:', err);
+                fallbackCopyTextToClipboard(content, sheetTitle);
+            });
+        } else {
+            // Fallback for older browsers or non-secure contexts
+            fallbackCopyTextToClipboard(content, sheetTitle);
+        }
+        
+    } catch (error) {
+        console.error('Copy failed:', error);
+        alert('Copy failed. Please try selecting and copying the data manually.');
+    }
+}
+
+function fallbackCopyTextToClipboard(text, sheetTitle) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    
+    // Avoid scrolling to bottom
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            alert(`${sheetTitle} data copied to clipboard!\nYou can now paste this into Excel (Ctrl+V).`);
+        } else {
+            alert('Copy command failed. Please select and copy the data manually.');
+        }
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
+        alert('Copy failed. Please select and copy the data manually.');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Add function to copy all sheets
+function downloadAllSheets() {
+    try {
+        let csvContent = "Floor & Decor Holdings Inc (FND) - Complete Financial Model\n";
+        csvContent += "Generated on: " + new Date().toLocaleDateString() + "\n\n";
+        
+        const sheets = document.querySelectorAll('.sheet-content');
+        sheets.forEach((sheet, sheetIndex) => {
+            const sheetTitle = sheet.querySelector('h2').textContent;
+            csvContent += `\n${'='.repeat(50)}\n`;
+            csvContent += `${sheetTitle.toUpperCase()}\n`;
+            csvContent += `${'='.repeat(50)}\n\n`;
+            
+            const tables = sheet.querySelectorAll('.excel-table');
+            tables.forEach((table, tableIndex) => {
+                const sectionHeader = table.querySelector('.section-header');
+                if (sectionHeader) {
+                    csvContent += sectionHeader.textContent + "\n";
+                }
+                
+                const rows = table.querySelectorAll('tr');
+                rows.forEach((row, rowIndex) => {
+                    const cells = row.querySelectorAll('th, td');
+                    const rowData = Array.from(cells).map(cell => {
+                        let text = cell.textContent.trim();
+                        text = text.replace(/"/g, '""');
+                        return `"${text}"`;
+                    });
+                    csvContent += rowData.join(',') + '\n';
+                });
+                csvContent += '\n';
+            });
+        });
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'FND_Complete_Financial_Model.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert('Complete financial model downloaded successfully!');
+        
+    } catch (error) {
+        console.error('Download all sheets failed:', error);
+        alert('Download failed. Please try downloading individual sheets.');
+    }
+}
+
+// Add hover effects to tables
+document.addEventListener('DOMContentLoaded', function() {
+    const tables = document.querySelectorAll('.excel-table');
+    tables.forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f8ff';
+            });
+            row.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+            });
+        });
+    });
+});
+</script>
+
+</body>
+</html>

@@ -33,6 +33,7 @@
 <button class="download-btn" onclick="downloadAsCSV()">Download Current Sheet as CSV</button>
 <button class="download-btn" onclick="copyToClipboard()">Copy Current Sheet to Clipboard</button>
 <button class="download-btn" onclick="downloadAllSheets()">Download All Sheets as CSV</button>
+<button class="download-btn" onclick="printToPDF()">Print All Sheets to PDF</button>
 
 <div class="sheet-tabs">
     <div class="sheet-tab active" onclick="showSheet('summary')">Summary & Valuation</div>
@@ -635,6 +636,169 @@ function downloadAllSheets() {
     } catch (error) {
         console.error('Download all sheets failed:', error);
         alert('Download failed. Please try downloading individual sheets.');
+    }
+}
+
+// Add function to print all sheets to PDF
+function printToPDF() {
+    try {
+        // Store current state
+        const currentActiveTab = document.querySelector('.sheet-tab.active');
+        const currentActiveSheet = document.querySelector('.sheet-content.active');
+        
+        // Create a new window for printing
+        const printWindow = window.open('', '_blank');
+        
+        // Build the HTML content for printing
+        let printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Floor & Decor Holdings (FND) - Financial Model</title>
+            <style>
+                @media print {
+                    @page { 
+                        size: A4 landscape; 
+                        margin: 0.5in; 
+                    }
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        font-size: 10px; 
+                        line-height: 1.2; 
+                    }
+                    .page-break { 
+                        page-break-before: always; 
+                    }
+                    .excel-table { 
+                        border-collapse: collapse; 
+                        width: 100%; 
+                        margin: 10px 0; 
+                        font-size: 9px;
+                    }
+                    .excel-table th, .excel-table td { 
+                        border: 1px solid #000; 
+                        padding: 4px; 
+                        text-align: right; 
+                    }
+                    .excel-table th { 
+                        background-color: #4472C4 !important; 
+                        color: white !important; 
+                        font-weight: bold; 
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                    .excel-table td:first-child, .excel-table th:first-child { 
+                        text-align: left; 
+                    }
+                    .section-header { 
+                        background-color: #70AD47 !important; 
+                        color: white !important; 
+                        font-weight: bold; 
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                    .reported { color: blue !important; font-weight: bold; }
+                    .calculated { color: black !important; }
+                    .assumption { color: red !important; font-weight: bold; }
+                    .street { color: purple !important; font-weight: bold; }
+                    h1 { 
+                        text-align: center; 
+                        margin-bottom: 20px; 
+                        font-size: 16px;
+                    }
+                    h2 { 
+                        font-size: 14px; 
+                        margin: 20px 0 10px 0; 
+                        color: #2a5298;
+                    }
+                    .sheet-header {
+                        font-size: 12px;
+                        font-weight: bold;
+                        margin: 15px 0;
+                        text-decoration: underline;
+                    }
+                }
+                body { 
+                    font-family: Arial, sans-serif; 
+                    margin: 0; 
+                    padding: 20px; 
+                }
+                .excel-table { 
+                    border-collapse: collapse; 
+                    width: 100%; 
+                    margin: 15px 0; 
+                    font-size: 10px;
+                }
+                .excel-table th, .excel-table td { 
+                    border: 1px solid #000; 
+                    padding: 6px; 
+                    text-align: right; 
+                }
+                .excel-table th { 
+                    background-color: #4472C4; 
+                    color: white; 
+                    font-weight: bold; 
+                }
+                .excel-table td:first-child, .excel-table th:first-child { 
+                    text-align: left; 
+                }
+                .section-header { 
+                    background-color: #70AD47; 
+                    color: white; 
+                    font-weight: bold; 
+                }
+                .reported { color: blue; font-weight: bold; }
+                .calculated { color: black; }
+                .assumption { color: red; font-weight: bold; }
+                .street { color: purple; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <h1>Floor & Decor Holdings, Inc. (FND) - Financial Model</h1>
+            <p style="text-align: center; margin-bottom: 30px;">Generated on ${new Date().toLocaleDateString()}</p>
+        `;
+        
+        // Add each sheet to the print content
+        const sheets = document.querySelectorAll('.sheet-content');
+        sheets.forEach((sheet, index) => {
+            const sheetTitle = sheet.querySelector('h2').textContent;
+            
+            if (index > 0) {
+                printContent += '<div class="page-break"></div>';
+            }
+            
+            printContent += `<div class="sheet-header">${sheetTitle}</div>`;
+            
+            const tables = sheet.querySelectorAll('.excel-table');
+            tables.forEach((table) => {
+                printContent += table.outerHTML;
+            });
+        });
+        
+        printContent += `
+            </body>
+        </html>`;
+        
+        // Write content to new window
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        
+        // Wait for content to load, then print
+        printWindow.onload = function() {
+            setTimeout(() => {
+                printWindow.print();
+                // Close the window after printing (user can cancel)
+                printWindow.onafterprint = function() {
+                    printWindow.close();
+                };
+            }, 500);
+        };
+        
+        alert('Opening print dialog for PDF export...\nTip: Select "Save as PDF" as your printer destination.');
+        
+    } catch (error) {
+        console.error('Print to PDF failed:', error);
+        alert('Print failed. Please try using your browser\'s print function (Ctrl+P) while viewing the model.');
     }
 }
 

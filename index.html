@@ -642,13 +642,6 @@ function downloadAllSheets() {
 // Add function to print all sheets to PDF
 function printToPDF() {
     try {
-        // Store current state
-        const currentActiveTab = document.querySelector('.sheet-tab.active');
-        const currentActiveSheet = document.querySelector('.sheet-content.active');
-        
-        // Create a new window for printing
-        const printWindow = window.open('', '_blank');
-        
         // Build the HTML content for printing
         let printContent = `
         <!DOCTYPE html>
@@ -718,6 +711,7 @@ function printToPDF() {
                         text-decoration: underline;
                     }
                 }
+                /* Styles for iframe content if needed, though print styles are primary */
                 body { 
                     font-family: Arial, sans-serif; 
                     margin: 0; 
@@ -758,17 +752,13 @@ function printToPDF() {
             <p style="text-align: center; margin-bottom: 30px;">Generated on ${new Date().toLocaleDateString()}</p>
         `;
         
-        // Add each sheet to the print content
         const sheets = document.querySelectorAll('.sheet-content');
         sheets.forEach((sheet, index) => {
             const sheetTitle = sheet.querySelector('h2').textContent;
-            
             if (index > 0) {
                 printContent += '<div class="page-break"></div>';
             }
-            
             printContent += `<div class="sheet-header">${sheetTitle}</div>`;
-            
             const tables = sheet.querySelectorAll('.excel-table');
             tables.forEach((table) => {
                 printContent += table.outerHTML;
@@ -778,27 +768,47 @@ function printToPDF() {
         printContent += `
             </body>
         </html>`;
-        
-        // Write content to new window
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        
-        // Wait for content to load, then print
-        printWindow.onload = function() {
-            setTimeout(() => {
-                printWindow.print();
-                // Close the window after printing (user can cancel)
-                printWindow.onafterprint = function() {
-                    printWindow.close();
-                };
-            }, 500);
+
+        // Create a hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        iframe.style.visibility = 'hidden'; // Ensure it's not visible
+        document.body.appendChild(iframe);
+
+        const iframeDoc = iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(printContent);
+        iframeDoc.close();
+
+        // Wait for the iframe content to be fully loaded and rendered
+        iframe.onload = function() {
+            setTimeout(function() { // Timeout helps ensure rendering is complete
+                try {
+                    iframe.contentWindow.focus(); // Focus on the iframe's content
+                    iframe.contentWindow.print(); // Trigger print dialog
+                } catch (e) {
+                    console.error("Error during iframe print operation:", e);
+                    alert('An error occurred while trying to print using an iframe. Error: ' + e.message);
+                } finally {
+                    // Remove the iframe after a short delay, allowing print dialog to process
+                    // Browsers might handle onafterprint differently or not at all for iframes.
+                    setTimeout(() => {
+                        if (document.body.contains(iframe)) {
+                            document.body.removeChild(iframe);
+                        }
+                    }, 1000); // Adjust delay if needed
+                }
+            }, 500); // Initial delay before trying to print
         };
         
-        alert('Opening print dialog for PDF export...\nTip: Select "Save as PDF" as your printer destination.');
+        alert('Preparing document for PDF export...\\nTip: Select "Save as PDF" as your printer destination.');
         
     } catch (error) {
-        console.error('Print to PDF failed:', error);
-        alert('Print failed. Please try using your browser\'s print function (Ctrl+P) while viewing the model.');
+        console.error('Print to PDF failed (outer try-catch):', error);
+        alert('Print failed due to an unexpected error. Please try using your browser\\\'s print function (Ctrl+P). Error: ' + error.message);
     }
 }
 
